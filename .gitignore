@@ -1,6 +1,32 @@
-/vendor
-/node_modules
+# Generic
+# --------------------------
+Thumbs.db
+Desktop.ini
+Icon?
+.directory
+*.cache
+*.old
+*~
+
+# IDE Project Configurations
+# --------------------------
+nbproject/
+.idea/
+.settings/
+.project
+*.sublime-*
+
+# Developments
+# --------------------------
 /public/storage
-Homestead.yaml
+/tests/clover.xml
 Homestead.json
+Homestead.yaml
+node_modules
+vendor
 .env
+
+# But Keep these
+# --------------------------
+!.htaccess
+!.gitkeep
