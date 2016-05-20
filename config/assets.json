@@ -1,10 +1,26 @@
 {
+    "serve": {
+        "port"  : 8080,
+        "host"  : "localhost",
+        "proxy" : "localhost:8000",
+        "open"  : false
+    },
+    "sass": {
+        "outputStyle" : "compact"
+    },
     "autoprefixer": {
-        "browser": ["> 1%", "last 10 versions", "Firefox ESR", "Opera 12.1"]
+        "browser" : ["> 1%", "last 10 versions", "Firefox ESR", "Opera 12.1"]
+    },
+    "uglify": {
+        "compress": {},
+        "preserveComments": "license"
+    },
+    "imagemin": {
+        "progressive": true
     },
     "paths": {
         "src"  : "resources/assets/",
-        "dest" : "public/assets/"
+        "dest" : "storage/app/assets/"
     },
     "patterns": {
         "server"  : "{app,resources}/**/*.php",

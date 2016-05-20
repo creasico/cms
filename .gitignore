@@ -18,7 +18,9 @@ nbproject/
 
 # Developments
 # --------------------------
-/public/storage
+/public/assets
+/public/avatars
+/public/uploads
 /tests/clover.xml
 Homestead.json
 Homestead.yaml

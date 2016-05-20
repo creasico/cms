@@ -1,24 +1,38 @@
+'use strict';
 
 /* Gulp set up
 --------------------------------------------------------------------------------- */
 
-var del   = require('del'),
-    path  = require('path'),
-    gulp  = require('gulp'),
-    gutil = require('gulp-util'),
+const del   = require('del');
+const path  = require('path');
+const gulp  = require('gulp');
+const gutil = require('gulp-util');
 
-    sequence    = require('run-sequence'),
-    browserSync = require('browser-sync'),
+const sequence    = require('run-sequence');
+const browserSync = require('browser-sync');
 
-    // load all plugins with prefix 'gulp'
-    $ = require('gulp-load-plugins')();
+// load all plugins with prefix 'gulp'
+const $ = require('gulp-load-plugins')();
 
-
-var configs = require('./config/assets');
-var paths = {
+const configs = require('./config/assets');
+const paths = {
     src: configs.paths.src,
     dest: configs.paths.dest
 };
+
+// Determine build mode, default is 'dev'
+configs.mode = 'dev';
+// If mode is invalid, back to 'dev' mode
+if (['dev', 'prod'].indexOf(process.env.MODE) !== -1) {
+    configs.mode = process.env.MODE;
+}
+
+const production = configs.mode !== 'dev';
+
+// Declaring 'serve' config
+configs.port  = process.env.APP_PORT  || configs.serve.port; // 8080;
+configs.host  = process.env.APP_HOST  || configs.serve.host; // 'localhost';
+configs.proxy = process.env.APP_PROXY || configs.serve.proxy; // 'localhost:8000';
 
 /**
  * Print out something replacing default `console.log`
@@ -27,12 +41,24 @@ var paths = {
  * @param  {String} color
  * @return {Mixed}
  */
-var echo = function (message, color) {
-    var color = color && color in gutil.colors ? color : 'green',
-        cb = gutil.colors[color],
-        msg = cb(message);
+const echo = (message, color) => {
+    color = color && color in gutil.colors ? color : 'green';
+
+    const cb = gutil.colors[color];
+    const msg = cb(message);
 
     return gutil.log(msg);
+};
+
+/**
+ * Simple helper to finalize each tasks
+ *
+ * @param  {Object} build Gulp pipe object
+ * @return {Object}
+ */
+const asset = (build) => {
+    return build.pipe(gulp.dest(paths.dest))
+        .pipe(browserSync.stream());
 };
 
 /**
@@ -41,36 +67,45 @@ var echo = function (message, color) {
  * @param  {Object} err Error instance
  * @return {Mixed}
  */
-configs.errorHandler = function (err) {
-    var message = err.message.replace(err.fileName + ': ', ''),
-        filename = err.fileName.replace(__dirname, '') + ' (' + err.lineNumber + ')';
+const errorHandler = (err) => {
+    const message = err.message.replace(err.fileName + ': ', '');
+    const filename = err.fileName.replace(__dirname, '');
 
-    return echo([
-        '[Error] ' + message,
-        ' filename: ' + filename
+    if (err.lineNumber) {
+        filename += ` (${err.lineNumber})`;
+    }
+
+    echo([
+        `[Error] ${message}`,
+        ` filename: ${filename}`
     ].join('\n'), 'red');
+
+    this.emit('end');
 };
 
-for (var key in configs.patterns) {
+for (let key in configs.patterns) {
     paths[key] = configs.paths.src + configs.patterns[key];
 }
-
-configs.port  = process.env.APP_PORT || 8080;
-configs.host  = process.env.APP_HOST || 'localhost';
-configs.proxy = 'localhost:8000';
 
 
 /* Task: Compile SCSS
 --------------------------------------------------------------------------------- */
 
-gulp.task('build:styles', function () {
-    return gulp.src(paths.styles, { base: paths.src })
-        .pipe($.sass({ outputStyle: 'compressed' }).on('error', $.sass.logError))
-        .pipe($.autoprefixer(configs.autoprefixer))
-        .pipe($.cleanCss())
-        .pipe($.rename({ suffix: '.min' }))
-        .pipe(gulp.dest(paths.dest))
-        .pipe(browserSync.stream());
+gulp.task('build:styles', () => {
+    configs.sass.includePaths = [
+        `${paths.src}vendor`
+    ];
+
+    const build = gulp.src(paths.styles, { base: paths.src })
+        .pipe($.sass(configs.sass).on('error', $.sass.logError))
+        .pipe($.autoprefixer(configs.autoprefixer));
+
+    if (production) {
+        build.pipe($.cleanCss())
+            .on('error', errorHandler);
+    }
+
+    return asset(build);
 });
 
 
@@ -78,12 +113,17 @@ gulp.task('build:styles', function () {
 /* Task: Minify JS
 --------------------------------------------------------------------------------- */
 
-gulp.task('build:scripts', function () {
-    return gulp.src(paths.scripts, { base: paths.src })
-        .pipe($.uglify().on('error', configs.errorHandler))
-        .pipe($.rename({ suffix: '.min' }))
-        .pipe(gulp.dest(paths.dest))
-        .pipe(browserSync.stream());
+gulp.task('build:scripts', () => {
+    const build = gulp.src(paths.scripts, { base: paths.src })
+        .pipe($.babel({ preset: ['es2015'] }))
+        .on('error', errorHandler);
+
+    if (production) {
+        build.pipe($.uglify(configs.uglify))
+            .on('error', errorHandler);
+    }
+
+    return asset(build);
 });
 
 
@@ -91,11 +131,15 @@ gulp.task('build:scripts', function () {
 /* Task: Optimize image
 --------------------------------------------------------------------------------- */
 
-gulp.task('build:images', function () {
-    return gulp.src(paths.images, { base: paths.src })
-        .pipe($.imagemin({ progressive: true }))
-        .pipe(gulp.dest(paths.dest))
-        .pipe(browserSync.stream());
+gulp.task('build:images', () => {
+    const build = gulp.src(paths.images, { base: paths.src });
+
+    if (production) {
+        build.pipe($.imagemin(configs.imagemin))
+            .on('error', errorHandler);
+    }
+
+    return asset(build);
 });
 
 
@@ -103,7 +147,7 @@ gulp.task('build:images', function () {
 /* Task: Watch
 --------------------------------------------------------------------------------- */
 
-gulp.task('watch', ['browsersync', 'build'], function (done) {
+gulp.task('watch', ['browsersync'], (done) => {
     // SCSS
     gulp.watch(paths.styles,  ['build:styles']);
     // Uglify
@@ -123,12 +167,12 @@ gulp.task('watch', ['browsersync', 'build'], function (done) {
 /* Task: Browsersync
 --------------------------------------------------------------------------------- */
 
-gulp.task('browsersync', function () {
+gulp.task('browsersync', () => {
     return browserSync.init({
         port: configs.port,
         host: configs.host,
         proxy: { target: configs.proxy },
-        open: 'external',
+        open: 'open' in configs.serve ? configs.serve.open : 'external',
         logConnections: false
     });
 });
@@ -138,24 +182,12 @@ gulp.task('browsersync', function () {
 /* Task: Clean
 --------------------------------------------------------------------------------- */
 
-gulp.task('clean', function (done) {
-    del(paths.dest + configs.patterns.front).then(function () {
+gulp.task('clean', (done) => {
+    del(paths.dest + configs.patterns.assets).then(() => {
         echo('Assets directory cleaned', 'green');
     });
 
     return done();
-});
-
-
-
-/* Task: Copy from Front-end
---------------------------------------------------------------------------------- */
-
-gulp.task('copy:frontend', function () {
-    var srcToCopy = configs.paths.front + configs.patterns.front;
-
-    return gulp.src(srcToCopy, { base: configs.paths.front })
-        .pipe(gulp.dest(paths.dest));
 });
 
 
@@ -170,6 +202,6 @@ gulp.task('build', ['build:styles', 'build:scripts', 'build:images']);
 /* Task: Default
 --------------------------------------------------------------------------------- */
 
-gulp.task('default', function (done) {
-    return sequence('clean', 'copy:frontend', 'build', done);
+gulp.task('default', (done) => {
+    return sequence('clean', 'build', done);
 });

@@ -46,17 +46,6 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
-        ],
-
-        'uploads' => [
-            'driver' => 'local',
-            'root' => storage_path('app/uploads'),
-            'visibility' => 'public',
-        ],
-
-        'avatars' => [
-            'driver' => 'local',
-            'root' => storage_path('app/avatars'),
             'visibility' => 'public',
         ],
 
