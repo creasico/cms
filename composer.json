@@ -1,7 +1,7 @@
 {
     "name": "creasi/cms",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "Creasi CMS.",
+    "keywords": ["creasi", "cms", "project", "skeleton", "laravel"],
     "license": "MIT",
     "type": "project",
     "scripts": {
