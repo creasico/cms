@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use App\Http\Controllers\AbstractCrudController;
 
-class AdminController extends AbstractController
+class HomeController extends AbstractCrudController
 {
     /**
      * Create a new controller instance.
@@ -14,7 +15,7 @@ class AdminController extends AbstractController
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
