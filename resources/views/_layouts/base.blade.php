@@ -7,6 +7,10 @@
 
     <title>{{ config('project.title') }}</title>
 
+    {{-- DOC: include application favicons --}}
+    @include('_partials.favicons')
+
+    {{-- DOC: include page head, this section contains all stylesheets --}}
     @include('_partials._head')
 </head>
 <body id="app-layout">

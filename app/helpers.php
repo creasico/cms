@@ -40,3 +40,17 @@ if (! function_exists('upload_path')) {
         return $path;
     }
 }
+
+if (! function_exists('asset_url')) {
+    /**
+     * Retrive asset_url.
+     *
+     * @param  string $path     Path suffix.
+     * @param  bool   $secure Whether you want to get an secure path.
+     * @return [type]
+     */
+    function asset_url($path = '', $secure = false)
+    {
+        return asset('assets/'.$path, $secure);
+    }
+}

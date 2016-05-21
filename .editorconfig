@@ -12,7 +12,7 @@ indent_style = space
 [{app,config,database,resources,tests}/**.php]
 indent_size = 4
 
-[{resources,storage,tests}/**.{scss,js,css,yml,xml}]
+[{resources,storage,tests,public}/**.{scss,js,css,yml,xml,json}]
 indent_size = 4
 
 [*.md]
