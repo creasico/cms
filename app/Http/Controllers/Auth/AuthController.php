@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use Validator;
 use App\Models\User;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AbstractController;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-class AuthController extends Controller
+class AuthController extends AbstractController
 {
     /*
     |--------------------------------------------------------------------------

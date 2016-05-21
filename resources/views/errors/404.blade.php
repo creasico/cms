@@ -5,8 +5,8 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Under Maintenance</div>
-                <div class="panel-body">Just a moment, we'll be right back.</div>
+                <div class="panel-heading">Woops, 404 page not found</div>
+                <div class="panel-body">Page that you looking for seems not to be on our server.</div>
             </div>
         </div>
     </div>
