@@ -8,7 +8,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
-class Model extends EloquentModel
+abstract class Model extends EloquentModel
 {
     /**
      * Key used for SEO in url.
@@ -62,7 +62,7 @@ class Model extends EloquentModel
      *
      * @return string[]
      */
-    protected function getSearchable()
+    public function getSearchable()
     {
         if (!$this->searchable) {
             $this->searchable = array_diff($this->getFillable(), $this->getHidden());
@@ -267,7 +267,7 @@ class Model extends EloquentModel
         try {
             return parent::asDateTime($value);
         } catch (\InvalidArgumentException $e) {
-            return Carbon::createFromFormat(self::FORMAT_DATETIME_STRING, $value);
+            return Carbon::createFromFormat('d F Y, H:i', $value);
         }
     }
 }

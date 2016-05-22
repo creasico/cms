@@ -18,6 +18,11 @@ class User extends Model implements
     use Authenticatable, Authorizable, CanResetPassword;
 
     /**
+     * @{inheritdoc}
+     */
+    protected $table = 'users';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -34,4 +39,16 @@ class User extends Model implements
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Set default value for the password field
+     *
+     * @param string $value
+     */
+    public function setPasswordAttribute($value)
+    {
+        if (! empty($value)) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
 }

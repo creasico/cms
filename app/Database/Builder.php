@@ -5,7 +5,7 @@ namespace App\Database;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-class Builder extends EloquentBuilder
+abstract class Builder extends EloquentBuilder
 {
     /**
      * Find a model by its Url key.
@@ -20,7 +20,7 @@ class Builder extends EloquentBuilder
             return $this->findByRouteKeys($key, $columns);
         }
 
-        $this->query->where($this->model->getQualifiedRouteKeyName(), '=', $key);
+        $this->query->where($this->model->getQualifiedRouteKeyName(), $key);
 
         return $this->first($columns);
     }
@@ -28,17 +28,17 @@ class Builder extends EloquentBuilder
     /**
      * Find a model by its url key.
      *
-     * @param  array  $ids
+     * @param  array  $keys
      * @param  array  $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findByRouteKeys(array $ids, array $columns = ['*'])
+    public function findByRouteKeys(array $keys, array $columns = ['*'])
     {
-        if (empty($ids)) {
+        if (empty($keys)) {
             return $this->model->newCollection();
         }
 
-        $this->query->whereIn($this->model->getQualifiedRouteKeyName(), $ids);
+        $this->query->whereIn($this->model->getQualifiedRouteKeyName(), $keys);
 
         return $this->get($columns);
     }
