@@ -267,7 +267,7 @@ abstract class Model extends EloquentModel
         try {
             return parent::asDateTime($value);
         } catch (\InvalidArgumentException $e) {
-            return Carbon::createFromFormat('d F Y, H:i', $value);
+            return Carbon::createFromFormat('d F Y, H:i:s', $value);
         }
     }
 }

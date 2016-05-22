@@ -5,61 +5,31 @@ namespace App\Tests\Database;
 use Mockery;
 use Carbon\Carbon;
 use App\Tests\TestCase;
-use App\Database\Model;
-use App\Database\Builder;
+use App\Database\Model as AppModel;
+use App\Database\Builder as AppBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class ModelTest extends TestCase
 {
-    /**
-     * @var Model
-     */
-    private $mock;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->mock = Mockery::mock(Model::class);
-    }
-
     public function testGettingRouteKeyName()
     {
-        $this->mock->shouldReceive('getRouteKeyName')->andReturn('id');
+        $model = new Model;
 
-        $this->assertEquals('id', $this->mock->getRouteKeyName());
-    }
+        $this->assertEquals('id', $model->getRouteKeyName());
 
-    public function testSettingRouteKeyName()
-    {
-        $this->mock->shouldReceive('setRouteKeyName')->once();
-        $this->mock->shouldReceive('getRouteKeyName')->andReturn('name');
+        $this->assertEquals('models.id', $model->getQualifiedRouteKeyName());
 
-        $this->mock->setRouteKeyName('name');
-        $this->assertEquals('name', $this->mock->getRouteKeyName());
-    }
+        $model->setRouteKeyName('slug');
+        $this->assertEquals('slug', $model->getRouteKeyName());
 
-    public function testGettingQualifiedRouteKeyName()
-    {
-        $this->mock->shouldReceive('getQualifiedRouteKeyName')->andReturn('model.id');
-
-        $this->assertEquals('model.id', $this->mock->getQualifiedRouteKeyName());
+        $this->assertEquals('models.slug', $model->getQualifiedRouteKeyName());
     }
 
     public function testGettingSearchable()
     {
-        $this->mock->shouldReceive('getSearchable')->andReturn([]);
+        $model = new Model;
 
-        $this->assertEquals([], $this->mock->getSearchable());
-    }
-
-    public function testCreatingNewBuilder()
-    {
-        $builder = Mockery::mock(Builder::class);
-        $queryBuilder = Mockery::mock(QueryBuilder::class);
-        $this->mock->shouldReceive('newEloquentBuilder')->withArgs([$queryBuilder])->andReturn($builder);
-
-        $this->assertInstanceOf(Builder::class, $this->mock->newEloquentBuilder($queryBuilder));
+        $this->assertEquals([], $model->getSearchable());
     }
 
     /**
@@ -67,12 +37,13 @@ class ModelTest extends TestCase
      */
     public function testCastingValueAsDateTime($value, $expected)
     {
-        $carbon = Mockery::mock(Carbon::class);
-        $carbon->shouldReceive('__toString')->andReturn($expected);
-        $this->mock->shouldAllowMockingProtectedMethods();
-        $this->mock->shouldReceive('asDateTime')->withArgs([$value])->andReturn($carbon);
+        $mock = $this->getMockForAbstractClass(AppModel::class);
+        $mock->method('asDateTime')->with($value);
 
-        $actualReturn = $this->mock->asDateTime($value);
+        $model = new \ReflectionMethod(Model::class, 'asDateTime');
+        $model->setAccessible(true);
+
+        $actualReturn = $model->invokeArgs($mock, [$value]);
         $this->assertInstanceOf(Carbon::class, $actualReturn);
         $this->assertEquals($expected, (string) $actualReturn);
     }
@@ -80,13 +51,16 @@ class ModelTest extends TestCase
     public function dateStringValuesProvider()
     {
         $now = new Carbon();
-        $expect = (string) $now->format('d F Y, H:i');
+        $expect = (string) $now;
 
         return [
             [$now, $expect],
             [$now->timestamp, $expect],
-            [$now->toDateString(), $expect],
             [$now->toDateTimeString(), $expect],
+            [$now->format('d F Y, H:i:s'), $expect],
         ];
     }
 }
+
+class Model extends AppModel
+{}
