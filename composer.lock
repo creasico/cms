@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9832c18047bfe62f71ac651735a1e684",
-    "content-hash": "1e784814623eacd90a60fc94b1a5bc16",
+    "hash": "b08de2a3da614f8ac69c4c57829987ee",
+    "content-hash": "594f08f0c2ef4e080c0af2ea05e5305a",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2339,6 +2339,48 @@
                 "instantiate"
             ],
             "time": "2015-06-14 21:17:01"
+        },
+        {
+            "name": "fitztrev/query-tracer",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fitztrev/query-tracer.git",
+                "reference": "351fff26cec4962e414864fd9c376923a94ace28"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fitztrev/query-tracer/zipball/351fff26cec4962e414864fd9c376923a94ace28",
+                "reference": "351fff26cec4962e414864fd9c376923a94ace28",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^5.2",
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "illuminate/database": "5.2.*",
+                "orchestra/testbench": "~3.0",
+                "phpunit/phpunit": "~4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fitztrev\\QueryTracer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Backtrace database queries",
+            "keywords": [
+                "database",
+                "debug",
+                "eloquent",
+                "laravel"
+            ],
+            "time": "2016-05-22 13:30:05"
         },
         {
             "name": "fzaninotto/faker",

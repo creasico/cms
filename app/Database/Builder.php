@@ -5,7 +5,7 @@ namespace App\Database;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-abstract class Builder extends EloquentBuilder
+class Builder extends EloquentBuilder
 {
     /**
      * Find a model by its Url key.
