@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Clockwork\Support\Laravel\ClockworkServiceProvider;
 use Fitztrev\QueryTracer\Providers\QueryTracerServiceProvider;
+use Sentry\SentryLaravel\SentryLaravelServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->config['app.debug'] === true) {
             $providers[] = ClockworkServiceProvider::class;
             $providers[] = QueryTracerServiceProvider::class;
+            $providers[] = SentryLaravelServiceProvider::class;
         }
 
         return $providers;

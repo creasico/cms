@@ -57,6 +57,7 @@
         "phpunit/phpunit": "~4.0",
         "symfony/css-selector": "~3.0",
         "symfony/dom-crawler": "~3.0",
-        "fitztrev/query-tracer": "^1.0"
+        "fitztrev/query-tracer": "^1.0",
+        "sentry/sentry-laravel": "^0.3.0"
     }
 }
