@@ -8,6 +8,7 @@ const path  = require('path');
 const gulp  = require('gulp');
 const gutil = require('gulp-util');
 
+const app         = require('gulp-connect-php');
 const sequence    = require('run-sequence');
 const browserSync = require('browser-sync');
 
@@ -147,7 +148,7 @@ gulp.task('build:images', () => {
 /* Task: Watch
 --------------------------------------------------------------------------------- */
 
-gulp.task('watch', ['browsersync'], (done) => {
+gulp.task('watch', ['serve', 'browsersync'], (done) => {
     // SCSS
     gulp.watch(paths.styles,  ['build:styles']);
     // Uglify
@@ -174,6 +175,17 @@ gulp.task('browsersync', () => {
         proxy: { target: configs.proxy },
         open: 'open' in configs.serve ? configs.serve.open : 'external',
         logConnections: false
+    });
+});
+
+
+
+/* Task: Serve
+--------------------------------------------------------------------------------- */
+
+gulp.task('serve', () => {
+    app.server({
+        base: './public'
     });
 });
 
