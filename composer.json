@@ -52,12 +52,12 @@
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
-        "itsgoingd/clockwork": "^1.11",
+        "fitztrev/query-tracer": "~1.0",
+        "itsgoingd/clockwork": "~1.11",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~4.0",
+        "sentry/sentry-laravel": "~0.3",
         "symfony/css-selector": "~3.0",
-        "symfony/dom-crawler": "~3.0",
-        "fitztrev/query-tracer": "^1.0",
-        "sentry/sentry-laravel": "^0.3.0"
+        "symfony/dom-crawler": "~3.0"
     }
 }
