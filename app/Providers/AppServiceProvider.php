@@ -14,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    private $providers = [];
+    private $providers = [
+        HttpClientServicePrvider::class
+    ];
 
     /**
      * Bootstrap any application services.
