@@ -3,12 +3,19 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Sentry\SentryLaravel\SentryLaravelServiceProvider;
 use Clockwork\Support\Laravel\ClockworkServiceProvider;
 use Fitztrev\QueryTracer\Providers\QueryTracerServiceProvider;
-use Sentry\SentryLaravel\SentryLaravelServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * Register vendor providers that required by the application.
+     *
+     * @var array
+     */
+    private $providers = [];
+
     /**
      * Bootstrap any application services.
      *
@@ -26,26 +33,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        foreach ($this->provides() as $provider) {
+        if ($this->app->config['app.debug'] === true) {
+            $this->providers[] = ClockworkServiceProvider::class;
+            $this->providers[] = QueryTracerServiceProvider::class;
+            $this->providers[] = SentryLaravelServiceProvider::class;
+        }
+
+        foreach ($this->providers as $provider) {
             $this->app->register($provider);
         }
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function provides()
-    {
-        $providers = [];
-
-        if ($this->app->config['app.debug'] === true) {
-            $providers[] = ClockworkServiceProvider::class;
-            $providers[] = QueryTracerServiceProvider::class;
-            $providers[] = SentryLaravelServiceProvider::class;
-        }
-
-        return $providers;
     }
 }
