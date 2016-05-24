@@ -21,11 +21,6 @@
             "php artisan optimize"
         ]
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "preferred-install": "dist"
-    },
     "autoload": {
         "classmap": [
             "database"
@@ -45,11 +40,10 @@
     "require": {
         "php": ">=5.5.9",
         "guzzlehttp/guzzle": "^6.2",
+        "intervention/image": "~2.3",
         "laravel/framework": "5.2.*",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "predis/predis": "^1.0",
-        "symfony/psr-http-message-bridge": "^0.2.0",
-        "intervention/image": "~2.3"
+        "predis/predis": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -60,5 +54,10 @@
         "sentry/sentry-laravel": "~0.3",
         "symfony/css-selector": "~3.0",
         "symfony/dom-crawler": "~3.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "preferred-install": "dist"
     }
 }
