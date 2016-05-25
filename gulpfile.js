@@ -39,7 +39,7 @@ const production = configs.mode !== 'dev';
 // Declaring 'serve' config
 configs.port = process.env.APP_PORT || configs.serve.port; // 8080;
 configs.host = process.env.APP_HOST || configs.serve.host; // 'localhost';
-configs.url  = process.env.APP_URL  || configs.serve.url; // 'localhost:8000';
+configs.url  = process.env.APP_URL  || configs.serve.url;  // 'localhost:8000';
 
 /**
  * Print out something replacing default `console.log`
@@ -151,26 +151,26 @@ gulp.task('build:images', () => {
 
 
 
-/* Task: Browsersync
---------------------------------------------------------------------------------- */
-
-gulp.task('watch:sync', () => {
-    return browserSync.init({
-        port: configs.port,
-        host: configs.host,
-        proxy: { target: configs.url },
-        open: 'open' in configs.serve ? configs.serve.open : 'external',
-        logConnections: false
-    });
-});
-
-
-
 /* Task: Serve
 --------------------------------------------------------------------------------- */
 
-gulp.task('watch:connect', () => {
-    return connect.server({ base: './public' });
+gulp.task('serve', () => {
+    const sync = browserSync.init({
+        port: configs.port,
+        host: configs.host,
+        proxy: { target: configs.url },
+        open: 'open' in configs.serve ? configs.serve.open : false,
+        logConnections: false
+    });
+
+    // Let's assume that you already setup your app server vhost
+    if (configs.url.indexOf('localhost:8000') !== -1) {
+        return connect.server({ base: './public' }, () => {
+            return sync;
+        });
+    }
+
+    return sync;
 });
 
 
@@ -178,7 +178,7 @@ gulp.task('watch:connect', () => {
 /* Task: Watch
 --------------------------------------------------------------------------------- */
 
-gulp.task('watch', ['watch:connect', 'watch:sync'], (done) => {
+gulp.task('watch', ['serve'], (done) => {
     // SCSS
     gulp.watch(paths.styles,  ['build:styles']);
     // Uglify
@@ -198,25 +198,16 @@ gulp.task('watch', ['watch:connect', 'watch:sync'], (done) => {
 /* Task: Serve
 --------------------------------------------------------------------------------- */
 
-gulp.task('wdio', ['watch:connect'], (done) => {
-    // const service = 'saucelabs';
-    // if (['saucelabs', 'browserstack'].indexOf(process.env.USE_SERVICE)) {
-    //     service = process.env.USE_SERVICE;
-    // }
+// gulp.task('wdio', ['watch:connect'], () => {
+//     const conf = {
+//         user: process.env.BROWSERSTACK_USER,
+//         key: process.env.BROWSERSTACK_KEY,
+//         baseUrl: configs.url
+//     };
 
-    // const user = service === 'saucelabs' ? 'SAUCELABS_USER' : 'BROWSERSTACK_USER';
-    // const key  = service === 'saucelabs' ? 'SAUCELABS_KEY' : 'BROWSERSTACK_KEY';
-    const conf = {
-        user: process.env.SAUCELABS_USER,
-        key: process.env.SAUCELABS_KEY,
-        baseUrl: configs.url
-    };
-
-    gulp.src('./config/webdriver.js')
-        .pipe($.webdriver(conf));
-
-    return done();
-});
+//     return gulp.src('./config/webdriver.js')
+//         .pipe($.webdriver(conf));
+// });
 
 
 
