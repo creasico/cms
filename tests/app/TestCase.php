@@ -25,6 +25,8 @@ abstract class TestCase extends BaseTestCase
 
         $app->make(Kernel::class)->bootstrap();
 
+        $this->baseUrl = env('APP_URL');
+
         return $app;
     }
 }
