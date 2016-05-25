@@ -42,7 +42,8 @@ abstract class IntegrationTestCase extends TestCase
     protected function createWebDriver()
     {
         $webDriver = RemoteWebDriver::create(
-            $this->getDriverHost()
+            $this->getDriverHost(),
+            ['browserName' => 'firefox']
         );
 
         return $webDriver;
@@ -60,7 +61,7 @@ abstract class IntegrationTestCase extends TestCase
             $key = strtoupper($configs['host']);
 
             return sprintf(
-                'https://%s:%s@hub.%s.com/wd/hub'
+                'https://%s:%s@hub.%s.com/wd/hub',
                 env($key.'_USER'),
                 env($key.'_KEY'),
                 $configs['host']
@@ -72,10 +73,12 @@ abstract class IntegrationTestCase extends TestCase
 
     protected function getIntegrationConfig()
     {
-        return [];
+        return [
+            'host' => 'browserstack'
+        ];
     }
 
-    protected function visit($path)
+    public function visit($path)
     {
         $this->currentUri = $this->prepareUrlForRequest($path);
 

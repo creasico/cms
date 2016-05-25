@@ -198,16 +198,19 @@ gulp.task('watch', ['serve'], (done) => {
 /* Task: Serve
 --------------------------------------------------------------------------------- */
 
-// gulp.task('wdio', ['watch:connect'], () => {
-//     const conf = {
-//         user: process.env.BROWSERSTACK_USER,
-//         key: process.env.BROWSERSTACK_KEY,
-//         baseUrl: configs.url
-//     };
+gulp.task('wdio', (done) => {
+    const conf = {
+        user: process.env.BROWSERSTACK_USER,
+        key: process.env.BROWSERSTACK_KEY,
+        baseUrl: configs.url,
+        host: 'hub.browserstack.com'
+    };
 
-//     return gulp.src('./config/webdriver.js')
-//         .pipe($.webdriver(conf));
-// });
+    gulp.src('./config/webdriver.js')
+        .pipe($.webdriver(conf));
+
+    return done();
+});
 
 
 
