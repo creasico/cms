@@ -3,12 +3,13 @@
 /* Gulp set up
 --------------------------------------------------------------------------------- */
 
+const fs    = require('fs');
 const del   = require('del');
 const path  = require('path');
 const gulp  = require('gulp');
 const gutil = require('gulp-util');
 
-const app         = require('gulp-connect-php');
+const connect     = require('gulp-connect-php');
 const sequence    = require('run-sequence');
 const browserSync = require('browser-sync');
 
@@ -21,6 +22,11 @@ const paths = {
     dest: configs.paths.dest
 };
 
+const stats = fs.statSync('./.env');
+if (stats.isFile()) {
+    require('dotenv').config();
+}
+
 // Determine build mode, default is 'dev'
 configs.mode = 'dev';
 // If mode is invalid, back to 'dev' mode
@@ -31,9 +37,9 @@ if (['dev', 'prod'].indexOf(process.env.MODE) !== -1) {
 const production = configs.mode !== 'dev';
 
 // Declaring 'serve' config
-configs.port  = process.env.APP_PORT  || configs.serve.port; // 8080;
-configs.host  = process.env.APP_HOST  || configs.serve.host; // 'localhost';
-configs.proxy = process.env.APP_PROXY || configs.serve.proxy; // 'localhost:8000';
+configs.port = process.env.APP_PORT || configs.serve.port; // 8080;
+configs.host = process.env.APP_HOST || configs.serve.host; // 'localhost';
+configs.url  = process.env.APP_URL  || configs.serve.url; // 'localhost:8000';
 
 /**
  * Print out something replacing default `console.log`
@@ -145,10 +151,34 @@ gulp.task('build:images', () => {
 
 
 
+/* Task: Browsersync
+--------------------------------------------------------------------------------- */
+
+gulp.task('watch:sync', () => {
+    return browserSync.init({
+        port: configs.port,
+        host: configs.host,
+        proxy: { target: configs.url },
+        open: 'open' in configs.serve ? configs.serve.open : 'external',
+        logConnections: false
+    });
+});
+
+
+
+/* Task: Serve
+--------------------------------------------------------------------------------- */
+
+gulp.task('watch:connect', () => {
+    return connect.server({ base: './public' });
+});
+
+
+
 /* Task: Watch
 --------------------------------------------------------------------------------- */
 
-gulp.task('watch', ['serve', 'browsersync'], (done) => {
+gulp.task('watch', ['watch:connect', 'watch:sync'], (done) => {
     // SCSS
     gulp.watch(paths.styles,  ['build:styles']);
     // Uglify
@@ -165,28 +195,27 @@ gulp.task('watch', ['serve', 'browsersync'], (done) => {
 
 
 
-/* Task: Browsersync
---------------------------------------------------------------------------------- */
-
-gulp.task('browsersync', () => {
-    return browserSync.init({
-        port: configs.port,
-        host: configs.host,
-        proxy: { target: configs.proxy },
-        open: 'open' in configs.serve ? configs.serve.open : 'external',
-        logConnections: false
-    });
-});
-
-
-
 /* Task: Serve
 --------------------------------------------------------------------------------- */
 
-gulp.task('serve', () => {
-    app.server({
-        base: './public'
-    });
+gulp.task('wdio', ['watch:connect'], (done) => {
+    // const service = 'saucelabs';
+    // if (['saucelabs', 'browserstack'].indexOf(process.env.USE_SERVICE)) {
+    //     service = process.env.USE_SERVICE;
+    // }
+
+    // const user = service === 'saucelabs' ? 'SAUCELABS_USER' : 'BROWSERSTACK_USER';
+    // const key  = service === 'saucelabs' ? 'SAUCELABS_KEY' : 'BROWSERSTACK_KEY';
+    const conf = {
+        user: process.env.SAUCELABS_USER,
+        key: process.env.SAUCELABS_KEY,
+        baseUrl: configs.url
+    };
+
+    gulp.src('./config/webdriver.js')
+        .pipe($.webdriver(conf));
+
+    return done();
 });
 
 
