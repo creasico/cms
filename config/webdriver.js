@@ -20,21 +20,21 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 5,
+    maxInstances: 10,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
     capabilities: [
-        {
-            maxInstances: 1,
-            browserName: 'firefox'
-        },
-        {
-            maxInstances: 1,
-            browserName: 'chrome'
-        }
+        { browserName: 'chrome' },
+        { browserName: 'firefox' },
+        { browserName: 'internet explorer' },
+        { browserName: 'safari' },
+        { browserName: 'opera' },
+        { browserName: 'iPad' },
+        { browserName: 'iPhone' },
+        { browserName: 'android' }
     ],
     //
     // ===================
@@ -58,6 +58,10 @@ exports.config = {
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
+    //
+    // Set a base URL in order to shorten url command calls. If your url parameter starts
+    // with "/", the base url gets prepended.
+    baseUrl: 'http://creasi.co',
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
@@ -98,9 +102,7 @@ exports.config = {
     // before running any tests.
     framework: 'mocha',
     //
-    mochaOpts: {
-        ui: 'bdd'
-    },
+    mochaOpts: { ui: 'bdd' },
     //
     // =====
     // Hooks

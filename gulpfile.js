@@ -199,12 +199,23 @@ gulp.task('watch', ['serve'], (done) => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('wdio', (done) => {
+    const exec = require('child_process').exec;
     const conf = {
+        project: 'Creasi CMS',
+        build: '',
         user: process.env.BROWSERSTACK_USER,
         key: process.env.BROWSERSTACK_KEY,
         baseUrl: configs.url,
-        host: 'hub.browserstack.com'
+        host: 'hub.browserstack.com',
+        debug: true,
+        forcelocal: process.env.APP_ENV == 'local',
+        'browserstack.debug': true,
+        'browserstack.local': process.env.APP_ENV == 'local'
     };
+
+    exec('git rev-parse --short HEAD', { cwd: '.' }, (err, out) => {
+        conf.build = out;
+    })
 
     gulp.src('./config/webdriver.js')
         .pipe($.webdriver(conf));
