@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Support\Jobs;
+namespace App\Support;
 
 use Illuminate\Bus\Queueable;
 
-abstract class Job
+abstract class Jobs
 {
     /*
     |--------------------------------------------------------------------------
