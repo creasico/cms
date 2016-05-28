@@ -5,8 +5,7 @@
     "license": "MIT",
     "type": "project",
     "scripts": {
-        "test:tdd": "php vendor/bin/phpunit -c tests/phpunit.xml --coverage-text --coverage-clover tests/clover.xml --exclude-group integration",
-        "test:bdd": "php vendor/bin/phpunit -c tests/phpunit.xml --coverage-text --coverage-clover tests/clover.xml --group integration",
+        "test": "php vendor/bin/phpunit -c tests/phpunit.xml --coverage-text --coverage-clover tests/clover.xml",
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
         ],

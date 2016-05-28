@@ -12,12 +12,12 @@ Documentation for the framework can be found on the [Creasi CMS website](wiki).
 
 ## Contributing
 
-Thank you for considering contributing to the Creasi CMS! The contribution guide can be found in the [Creasi CMS documentation](wiki/contributions).
+Thank you for considering contributing to the Creasi CMS! The contribution guide can be found in the [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md).
 
-## Security Vulnerabilities
+## Sponsors
 
-If you discover a security vulnerability within Creasi CMS, please send an e-mail to Fery Wardiyanto at ferywardiyanto@gmail.com. All security vulnerabilities will be promptly addressed.
+[BrowserStact](http://browserstack.com)
 
 ## License
 
-The Creasi CMS is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+The Creasi CMS is open-source software licensed under the [MIT license](http://opensource.org/licenses/MIT).
