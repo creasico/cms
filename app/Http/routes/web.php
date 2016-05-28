@@ -9,10 +9,6 @@
 |
 */
 
-Route::get('/', function () {
-    info('Accesing web url');
-
-    return view('home');
-});
+Route::get('/', 'HomeController@index');
 
 Route::auth();
