@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Support\DataTableResponses;
 use App\Database\Model as AppModel;
-use App\Http\Controllers\AbstractController;
 use App\Contracts\FormRequestInterface;
 use Illuminate\Database\Eloquent\Model;
+use App\Http\Controllers\AbstractController;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class AbstractAdminController extends AbstractController
@@ -113,7 +113,7 @@ class AbstractAdminController extends AbstractController
         $this->callBefore(__FUNCTION__, $input, $model);
 
         if ($saved = $model->fill(array_filter($input->all()))->save()) {
-            $message = suitTrans('resources.created');
+            $message = trans('resources.created');
 
             if ($this->isAjax($input)) {
                 return response()->json(compact('message'));
@@ -160,7 +160,7 @@ class AbstractAdminController extends AbstractController
 
         if (empty($model)) {
             return $this->gotoIndex()
-                        ->with(NOTIF_DANGER, suitTrans('resources.not_found'));
+                        ->with(NOTIF_DANGER, trans('resources.not_found'));
         }
 
         $this->callBefore(__FUNCTION__, $key, $model);
@@ -186,7 +186,7 @@ class AbstractAdminController extends AbstractController
         $this->callBefore(__FUNCTION__, $key, $input, $model);
 
         if ($model->fill(array_filter($input->all()))->save()) {
-            $message = suitTrans('resources.updated');
+            $message = trans('resources.updated');
 
             if ($this->isAjax($input)) {
                 return response()->json(compact('message'));
@@ -215,11 +215,11 @@ class AbstractAdminController extends AbstractController
 
         if (empty($model)) {
             return $this->gotoIndex()
-                        ->with(NOTIF_DANGER, suitTrans('resources.not_found'));
+                        ->with(NOTIF_DANGER, trans('resources.not_found'));
         }
 
         if ($model->delete()) {
-            $message = suitTrans('resources.deleted');
+            $message = trans('resources.deleted');
 
             if ($this->isAjax($request)) {
                 return response()->json(compact('message'));

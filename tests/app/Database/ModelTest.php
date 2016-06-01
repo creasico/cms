@@ -50,7 +50,7 @@ class ModelTest extends TestCase
 
     public function dateStringValuesProvider()
     {
-        $now = new Carbon();
+        $now = new Carbon(null, 'Asia/Jakarta');
         $expect = (string) $now;
 
         return [
