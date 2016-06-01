@@ -5,10 +5,7 @@ namespace App\Support;
 use Closure;
 use DateTimeInterface;
 use Illuminate\Http\Request;
-use App\Database\Model as AppModel;
-use App\Contracts\FormRequestInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 trait DataTableResponses
@@ -34,7 +31,7 @@ trait DataTableResponses
      * Parse model to datatable formated json
      *
      * @param  Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function responseWithDatatableApi(Request $request)
     {
@@ -108,7 +105,7 @@ trait DataTableResponses
             sprintf(
                 '<a href="%s" class="btn btn-danger btn-sm" data-action="delete" data-token="%s" title="%s"><i class="fa fa-trash-o"></i></a>',
                 route($routePrefix . 'destroy', $model),
-                \Session::token(),
+                csrf_token(),
                 'Delete Data'
             )
         ];

@@ -49,7 +49,7 @@ class HttpClientServicePrvider extends ServiceProvider
     /**
      * Get the services provided by the provider.
      *
-     * @return void
+     * @return string[]
      */
     public function provides()
     {

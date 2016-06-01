@@ -250,7 +250,7 @@ class AbstractAdminController extends AbstractController
     /**
      * Retrieve model instance
      *
-     * @return AbstractModel
+     * @return AppModel
      */
     protected function model()
     {

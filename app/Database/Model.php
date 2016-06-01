@@ -54,7 +54,7 @@ abstract class Model extends EloquentModel
      */
     public function getQualifiedRouteKeyName()
     {
-        return $this->getTable() . '.' . $this->getRouteKeyName();
+        return $this->getTable().'.'.$this->getRouteKeyName();
     }
 
     /**
@@ -75,7 +75,6 @@ abstract class Model extends EloquentModel
      * Scope to obtain random data from database.
      *
      * @param  Builder  $query
-     * @param  int|null $num
      * @return Builder
      */
     public function scopeRandom(Builder $query, $limit = null)
@@ -164,7 +163,7 @@ abstract class Model extends EloquentModel
                 foreach ($this->getSearchFields() as $field) {
                     $field = $this->qualifyRelationField($field, $this->joinRelationCallback($query));
 
-                    $query->orWhere($field, 'LIKE', '%' . $keyword . '%');
+                    $query->orWhere($field, 'LIKE', '%'.$keyword.'%');
                 }
             });
         }
