@@ -151,7 +151,6 @@ return [
         /*
          * Vendor Service Providers...
          */
-        Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
 
         /*
          * Application Service Providers...

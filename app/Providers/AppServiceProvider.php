@@ -15,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     private $providers = [
-        HttpClientServicePrvider::class
+        SentryLaravelServiceProvider::class,
+        HttpClientServicePrvider::class,
     ];
 
     /**
@@ -35,10 +36,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->config['app.debug'] === true) {
+        if (!$this->app->environment('production')) {
             $this->providers[] = ClockworkServiceProvider::class;
             $this->providers[] = QueryTracerServiceProvider::class;
-            $this->providers[] = SentryLaravelServiceProvider::class;
         }
 
         foreach ($this->providers as $provider) {

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use Clockwork\Support\Laravel\ClockworkMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -15,7 +16,6 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \Clockwork\Support\Laravel\ClockworkMiddleware::class,
     ];
 
     /**
@@ -51,4 +51,18 @@ class Kernel extends HttpKernel
         'guest' => Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ];
+
+    /**
+     * Bootstrap the application for HTTP requests.
+     *
+     * @return void
+     */
+    public function bootstrap()
+    {
+        parent::bootstrap();
+
+        if (!$this->app->environment('production')) {
+            $this->prependMiddleware(ClockworkMiddleware::class);
+        }
+    }
 }
