@@ -12,7 +12,7 @@ If you find a bug or a documentation issue, please report it or even better: fix
 
 ## Security issues
 
-If you discover any security related issues, please contact us at [hallo@feryardiant.me](mailto:hallo@feryardiant.me) instead of submitting an issue on Github. This allows us to fix the issue and release a security hotfix without publicly disclosing the vulnerability.
+If you discover any security related issues, please contact us at [support@creasi.co](mailto:support@creasi.co) instead of submitting an issue on Github. This allows us to fix the issue and release a security hotfix without publicly disclosing the vulnerability.
 
 ## Feature requests
 
