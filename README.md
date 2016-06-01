@@ -3,8 +3,7 @@
 [![LICENSE](https://img.shields.io/packagist/l/creasico/cms.svg?style=flat-square)](LICENSE.md)
 [![VERSION](https://img.shields.io/packagist/v/creasico/cms.svg?style=flat-square)](https://github.com/creasico/cms/releases)
 [![Build Status](https://img.shields.io/travis/creasico/cms/master.svg?style=flat-square)](https://travis-ci.org/creasico/cms)
-[![Coveralls](https://img.shields.io/coveralls/creasico/cms/master.svg?style=flat-square)](https://coveralls.io/github/creasico/cms)
-[![Codecov branch](https://img.shields.io/codecov/c/github/creasico/cms/master.svg?maxAge=2592000)](https://codecov.io/gh/creasico/cms)
+[![Codecov](https://img.shields.io/codecov/c/github/creasico/cms/master.svg?style=flat-square)](https://codecov.io/gh/creasico/cms)
 [![Code Quality](https://img.shields.io/sensiolabs/i/e596b778-1f73-4a75-9012-8372322551f1.svg?style=flat-square)](https://insight.sensiolabs.com/projects/e596b778-1f73-4a75-9012-8372322551f1)
 
 Basic CMS Project Skeleton built on top of [Laravel Framework 5.2](http://laravel.com).
