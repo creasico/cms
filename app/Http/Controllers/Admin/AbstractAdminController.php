@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Support\DataTableResponses;
 use App\Database\Model as AppModel;
-use App\Controllers\AbstractController;
+use App\Http\Controllers\AbstractController;
 use App\Contracts\FormRequestInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\DispatchesJobs;
