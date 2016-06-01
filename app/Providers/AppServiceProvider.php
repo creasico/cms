@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
+use Faker\Factory as FakerFactory;
+use Faker\Generator as FakerGenerator;
 use Illuminate\Support\ServiceProvider;
 use Sentry\SentryLaravel\SentryLaravelServiceProvider;
 use Clockwork\Support\Laravel\ClockworkServiceProvider;
@@ -26,7 +29,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Set app locale to Faker?
+        $this->app->singleton(FakerGenerator::class, function () {
+            return FakerFactory::create($this->app->config['app.locale']);
+        });
+
+        // Set app locale to Carbon?
+        Carbon::setLocale($this->app->config['app.locale']);
     }
 
     /**
