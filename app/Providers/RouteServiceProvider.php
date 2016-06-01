@@ -35,21 +35,35 @@ class RouteServiceProvider extends ServiceProvider
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function map(Router $router)
+    public function map(Router $route)
     {
         // Define the "web" routes for this project.
-        $router->group([
+        $route->group([
             'namespace' => $this->namespace,
             'middleware' => 'web',
-        ], function ($router) {
+        ], function ($route) {
             require app_path('Http/routes/web.php');
+
+            // Authentication Routes...
+            $route->get('login', 'Auth\AuthController@showLoginForm');
+            $route->post('login', 'Auth\AuthController@login');
+            $route->get('logout', 'Auth\AuthController@logout');
+
+            // Registration Routes...
+            $route->get('register', 'Auth\AuthController@showRegistrationForm');
+            $route->post('register', 'Auth\AuthController@register');
+
+            // Password Reset Routes...
+            $route->get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
+            $route->post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
+            $route->post('password/reset', 'Auth\PasswordController@reset');
         });
 
         // Define the "admin" routes for this project.
-        $router->group([
+        $route->group([
             'namespace' => $this->namespace . '\Admin',
             'middleware' => 'auth',
-        ], function ($router) {
+        ], function ($route) {
             require app_path('Http/routes/admin.php');
         });
     }

@@ -10,3 +10,5 @@
 */
 
 Route::get('admin', 'HomeController@index');
+
+Route::resource('user', 'UserController');

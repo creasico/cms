@@ -91,7 +91,13 @@ const errorHandler = (err) => {
 };
 
 for (let key in configs.patterns) {
-    paths[key] = configs.paths.src + configs.patterns[key];
+    paths[key] = [
+        configs.paths.src + configs.patterns[key]
+    ];
+
+    if (key !== 'fonts') {
+        paths[key].push('./node_modules/*/' + configs.patterns[key]);
+    }
 }
 
 
@@ -104,8 +110,10 @@ gulp.task('build:styles', () => {
     ];
 
     const build = gulp.src(paths.styles, { base: paths.src })
+        .pipe($.sourcemaps.init())
         .pipe($.sass(configs.sass).on('error', $.sass.logError))
-        .pipe($.autoprefixer(configs.autoprefixer));
+        .pipe($.autoprefixer(configs.autoprefixer))
+        .pipe($.sourcemaps.write());
 
     if (production) {
         build.pipe($.cleanCss())
@@ -122,8 +130,10 @@ gulp.task('build:styles', () => {
 
 gulp.task('build:scripts', () => {
     const build = gulp.src(paths.scripts, { base: paths.src })
+        .pipe($.sourcemaps.init())
         .pipe($.babel({ preset: ['es2015'] }))
-        .on('error', errorHandler);
+        .on('error', errorHandler)
+        .pipe($.sourcemaps.write());
 
     if (production) {
         build.pipe($.uglify(configs.uglify))
@@ -139,7 +149,8 @@ gulp.task('build:scripts', () => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('build:images', () => {
-    const build = gulp.src(paths.images, { base: paths.src });
+    const build = gulp.src(paths.images, { base: paths.src })
+        .on('error', errorHandler);
 
     if (production) {
         build.pipe($.imagemin(configs.imagemin))
@@ -147,6 +158,19 @@ gulp.task('build:images', () => {
     }
 
     return asset(build);
+});
+
+
+
+/* Task: Optimize image
+--------------------------------------------------------------------------------- */
+
+gulp.task('build:fonts', () => {
+    return gulp.src(paths.fonts)
+        .pipe(gulp.dest((file) => {
+            file.path = file.base + path.basename(file.path);
+            return paths.dest + 'fonts/';
+        }));
 });
 
 
@@ -241,7 +265,7 @@ gulp.task('clean', (done) => {
 /* Task: Build
 --------------------------------------------------------------------------------- */
 
-gulp.task('build', ['build:styles', 'build:scripts', 'build:images']);
+gulp.task('build', ['build:styles', 'build:fonts', 'build:scripts', 'build:images']);
 
 
 

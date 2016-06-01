@@ -28,7 +28,7 @@ class User extends Model implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'username', 'email', 'password', 'display', 'active',
     ];
 
     /**
@@ -38,6 +38,20 @@ class User extends Model implements
      */
     protected $hidden = [
         'password', 'remember_token',
+    ];
+
+    /**
+     * @{inheritdoc}
+     */
+    protected $searchable = [
+        'username', 'display'
+    ];
+
+    /**
+     * @{inheritdoc}
+     */
+    protected $casts = [
+        'active' => 'boolean',
     ];
 
     /**

@@ -4,20 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AbstractCrudController;
+use App\Http\Controllers\AbstractController;
 
-class HomeController extends AbstractCrudController
+class HomeController extends AbstractController
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        // $this->middleware('auth');
-    }
-
     /**
      * Show the application dashboard.
      *
