@@ -22,13 +22,14 @@ install:
   - if [[ "$TRAVIS_PHP_VERSION" != '5.6' ]]; then composer install --no-progress -n; fi
 
 before_script:
+  - phpenv config-add tests/php.ini
   - mysql -e "create database if not exists ${DB_DATABASE}"
 
 script:
   - composer test
 
 after_success:
-  - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then curl -s https://codecov.io/bash | bash; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then bash <(curl -s https://codecov.io/bash); fi
   - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then php vendor/bin/coveralls -v ; fi
 
 after_script:
