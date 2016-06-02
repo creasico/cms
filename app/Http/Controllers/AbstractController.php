@@ -24,16 +24,16 @@ class AbstractController extends Controller
     /**
      * Custom view prefix.
      *
-     * @var string
+     * @var string|null
      */
-    protected $viewPrefix = 'suitcms::backend';
+    protected $viewPrefix = null;
 
     /**
      * Custom route prefix.
      *
-     * @var string
+     * @var string|null
      */
-    protected $routePrefix = 'backend';
+    protected $routePrefix = null;
 
     /**
      * Custom route index.
@@ -65,19 +65,21 @@ class AbstractController extends Controller
      */
     protected function getSelfName($snake = '', $pluralize = false)
     {
-        $prefix = __NAMESPACE__;
-        $selfName = str_replace([$prefix, 'Controller', '\\'], ['', '', ' '], static::class);
+        static $name;
+
+        if (!isset($name)) {
+            $name = str_replace([__NAMESPACE__, 'Controller', '\\'], ['', '', ' '], static::class);
+        }
 
         if ($snake) {
-            $snake = is_bool($snake) ? '' : $snake;
-            $selfName = Str::snake($selfName, $snake);
+            $name = Str::snake($name, is_bool($snake) ? '' : $snake);
         }
 
         if ($pluralize === true) {
-            $selfName = Str::plural($selfName);
+            $name = Str::plural($name);
         }
 
-        return $selfName;
+        return $name;
     }
 
     /**
@@ -89,16 +91,13 @@ class AbstractController extends Controller
      */
     protected function getSelfViewName($suffix = '', $pluralize = true)
     {
-        if (null === $this->viewPrefix) {
-            $this->viewPrefix = 'backend';
+        $view = $this->getSelfName('.', $pluralize).'.'.ltrim($suffix, '.');
+
+        if ($this->viewPrefix) {
+            $view = rtrim($this->viewPrefix, '.').'.'.$view;
         }
 
-        return sprintf(
-            '%s.%s.%s',
-            rtrim($this->viewPrefix, '.'),
-            $this->getSelfName('.', $pluralize),
-            ltrim($suffix, '.')
-        );
+        return $view;
     }
 
     /**
@@ -113,12 +112,13 @@ class AbstractController extends Controller
             $this->routePrefix = $this->getSelfName('-', true);
         }
 
-        return sprintf(
-            '%s.%s.%s',
-            rtrim($this->routePrefix, '.'),
-            $this->getSelfName('.'),
-            ltrim($suffix, '.')
-        );
+        $route = $this->getSelfName('.').'.'.ltrim($suffix, '.');
+
+        if ($this->routePrefix) {
+            $route = rtrim($this->routePrefix, '.').'.'.$route;
+        }
+
+        return $route;
     }
 
     /**
@@ -159,17 +159,17 @@ class AbstractController extends Controller
      */
     protected function gotoIndex()
     {
-        $redirect = redirect();
+        if (null === $this->routeIndex && method_exists($this, 'index')) {
+            $this->routeIndex = $this->getRoutePrefix('index');
+        }
 
         if (is_array($this->routeIndex)) {
             list($route, $param) = $this->routeIndex;
 
-            return $redirect->route($route, $param);
-        } elseif (is_string($this->routeIndex)) {
-            return $redirect->route($this->routeIndex);
+            return redirect()->route($route, $param);
         }
 
-        return redirect()->route($this->getRoutePrefix('index'));
+        return redirect()->route($this->routeIndex);
     }
 
     /**
@@ -178,7 +178,7 @@ class AbstractController extends Controller
      * @param  Request $request
      * @return bool
      */
-    final protected function isAjax(Request $request)
+    final protected function isAjaxOrJson(Request $request)
     {
         return $request->ajax() || $request->wantsJson();
     }
