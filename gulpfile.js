@@ -3,124 +3,37 @@
 /* Gulp set up
 --------------------------------------------------------------------------------- */
 
-const fs    = require('fs');
-const del   = require('del');
-const path  = require('path');
-const gulp  = require('gulp');
-const gutil = require('gulp-util');
-
-const connect     = require('gulp-connect-php');
-const sequence    = require('run-sequence');
-const browserSync = require('browser-sync');
+const gulp = require('gulp');
 
 // load all plugins with prefix 'gulp'
 const $ = require('gulp-load-plugins')();
 
-const configs = require('./config/assets');
-const paths = {
-    src: configs.paths.src,
-    dest: configs.paths.dest
-};
+const sequence    = require('run-sequence');
+const browserSync = require('browser-sync');
 
-const stats = fs.statSync('./.env');
-if (stats.isFile()) {
-    require('dotenv').config();
-}
-
-// Determine build mode, default is 'dev'
-configs.mode = 'dev';
-// If mode is invalid, back to 'dev' mode
-if (['dev', 'prod'].indexOf(process.env.MODE) !== -1) {
-    configs.mode = process.env.MODE;
-}
-
-const production = configs.mode !== 'dev';
-
-// Declaring 'serve' config
-configs.port = process.env.APP_PORT || configs.serve.port; // 8080;
-configs.host = process.env.APP_HOST || configs.serve.host; // 'localhost';
-configs.url  = process.env.APP_URL  || configs.serve.url;  // 'localhost:8000';
-
-/**
- * Print out something replacing default `console.log`
- *
- * @param  {String} message
- * @param  {String} color
- * @return {Mixed}
- */
-const echo = (message, color) => {
-    color = color && color in gutil.colors ? color : 'green';
-
-    const cb = gutil.colors[color];
-    const msg = cb(message);
-
-    return gutil.log(msg);
-};
-
-/**
- * Simple helper to finalize each tasks
- *
- * @param  {Object} build Gulp pipe object
- * @return {Object}
- */
-const asset = (build) => {
-    return build.pipe(gulp.dest(paths.dest))
-        .pipe(browserSync.stream());
-};
-
-/**
- * Simple error handler
- *
- * @param  {Object} err Error instance
- * @return {Mixed}
- */
-const errorHandler = (err) => {
-    const message = err.message.replace(err.fileName + ': ', '');
-    const filename = err.fileName.replace(__dirname, '');
-
-    if (err.lineNumber) {
-        filename += ` (${err.lineNumber})`;
-    }
-
-    echo([
-        `[Error] ${message}`,
-        ` filename: ${filename}`
-    ].join('\n'), 'red');
-
-    this.emit('end');
-};
-
-for (let key in configs.patterns) {
-    paths[key] = [
-        configs.paths.src + configs.patterns[key]
-    ];
-
-    if (key !== 'fonts') {
-        paths[key].push('./node_modules/*/' + configs.patterns[key]);
-    }
-}
-
+// Load build helpers
+const _ = require('./build/helpers')(gulp, browserSync);
 
 /* Task: Compile SCSS
 --------------------------------------------------------------------------------- */
 
 gulp.task('build:styles', () => {
-    configs.sass.includePaths = [
-        `${paths.src}vendor`
+    _.configs.sass.includePaths = [
+        `${_.paths.src}vendor`
     ];
 
-    const build = gulp.src(paths.styles, { base: paths.src })
+    const build = gulp.src(_.paths.styles, { base: _.paths.src })
         .pipe($.sourcemaps.init())
-        .pipe($.sass(configs.sass).on('error', $.sass.logError))
-        .pipe($.autoprefixer(configs.autoprefixer))
+        .pipe($.sass(_.configs.sass).on('error', $.sass.logError))
+        .pipe($.autoprefixer(_.configs.autoprefixer))
         .pipe($.sourcemaps.write());
 
-    if (production) {
+    if (_.production) {
         build.pipe($.cleanCss())
-            .on('error', errorHandler);
+            .on('error', _.errorHandler);
     }
 
-    return asset(build);
+    return _.asset(build);
 });
 
 
@@ -129,18 +42,18 @@ gulp.task('build:styles', () => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('build:scripts', () => {
-    const build = gulp.src(paths.scripts, { base: paths.src })
+    const build = gulp.src(_.paths.scripts, { base: _.paths.src })
         .pipe($.sourcemaps.init())
-        .pipe($.babel({ preset: ['es2015'] }))
-        .on('error', errorHandler)
+        .pipe($.babel({ presets: ['es2015'] }))
+        .on('error', _.errorHandler)
         .pipe($.sourcemaps.write());
 
-    if (production) {
-        build.pipe($.uglify(configs.uglify))
-            .on('error', errorHandler);
+    if (_.production) {
+        build.pipe($.uglify(_.configs.uglify))
+            .on('error', _.errorHandler);
     }
 
-    return asset(build);
+    return _.asset(build);
 });
 
 
@@ -149,15 +62,12 @@ gulp.task('build:scripts', () => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('build:images', () => {
-    const build = gulp.src(paths.images, { base: paths.src })
-        .on('error', errorHandler);
+    const build = gulp.src(_.paths.images, { base: _.paths.src })
+        .pipe($.changed(_.paths.dest))
+        .pipe($.imagemin(_.configs.imagemin))
+        .on('error', _.errorHandler);
 
-    if (production) {
-        build.pipe($.imagemin(configs.imagemin))
-            .on('error', errorHandler);
-    }
-
-    return asset(build);
+    return _.asset(build);
 });
 
 
@@ -165,12 +75,17 @@ gulp.task('build:images', () => {
 /* Task: Optimize image
 --------------------------------------------------------------------------------- */
 
-gulp.task('build:fonts', () => {
-    return gulp.src(paths.fonts)
+gulp.task('build:fonts', (done) => {
+    const path = require('path');
+
+    gulp.src(_.paths.fonts)
+        .pipe($.changed(_.paths.dest))
         .pipe(gulp.dest((file) => {
             file.path = file.base + path.basename(file.path);
-            return paths.dest + 'fonts/';
+            return _.paths.dest + 'fonts/';
         }));
+
+    return done();
 });
 
 
@@ -179,16 +94,17 @@ gulp.task('build:fonts', () => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('serve', () => {
+    const connect = require('gulp-connect-php');
     const sync = browserSync.init({
-        port: configs.port,
-        host: configs.host,
-        proxy: { target: configs.url },
-        open: 'open' in configs.serve ? configs.serve.open : false,
+        port: _.configs.port,
+        host: _.configs.host,
+        proxy: { target: _.configs.url },
+        open: 'open' in _.configs.serve ? _.configs.serve.open : false,
         logConnections: false
     });
 
     // Let's assume that you already setup your app server vhost
-    if (configs.url.indexOf('localhost:8000') !== -1) {
+    if (_.configs.url.indexOf('localhost:8000') !== -1) {
         return connect.server({ base: './public' }, () => {
             return sync;
         });
@@ -204,13 +120,13 @@ gulp.task('serve', () => {
 
 gulp.task('watch', ['serve'], (done) => {
     // SCSS
-    gulp.watch(paths.styles,  ['build:styles']);
+    gulp.watch(_.paths.styles,  ['build:styles']);
     // Uglify
-    gulp.watch(paths.scripts, ['build:scripts']);
+    gulp.watch(_.paths.scripts, ['build:scripts']);
     // Imagemin
-    gulp.watch(paths.images,  ['build:images']);
+    gulp.watch(_.paths.images,  ['build:images']);
     // Reload
-    gulp.watch(configs.patterns.server)
+    gulp.watch(_.configs.patterns.server)
         .on('change', browserSync.reload);
 
     // Done
@@ -229,7 +145,7 @@ gulp.task('wdio', (done) => {
         build: '',
         user: process.env.BROWSERSTACK_USER,
         key: process.env.BROWSERSTACK_KEY,
-        baseUrl: configs.url,
+        baseUrl: _.configs.url,
         host: 'hub.browserstack.com',
         debug: true,
         forcelocal: process.env.APP_ENV == 'local',
@@ -241,7 +157,7 @@ gulp.task('wdio', (done) => {
         conf.build = out;
     })
 
-    gulp.src('./config/webdriver.js')
+    gulp.src('./build/webdriver.js')
         .pipe($.webdriver(conf));
 
     return done();
@@ -253,7 +169,9 @@ gulp.task('wdio', (done) => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('clean', (done) => {
-    del(paths.dest + configs.patterns.assets).then(() => {
+    const del = require('del');
+
+    del(_.paths.dest + _.configs.patterns.assets).then(() => {
         echo('Assets directory cleaned', 'green');
     });
 
@@ -272,6 +190,4 @@ gulp.task('build', ['build:styles', 'build:fonts', 'build:scripts', 'build:image
 /* Task: Default
 --------------------------------------------------------------------------------- */
 
-gulp.task('default', (done) => {
-    return sequence('clean', 'build', done);
-});
+gulp.task('default', ['clean', 'build']);

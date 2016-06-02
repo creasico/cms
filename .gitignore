@@ -18,7 +18,6 @@ nbproject/
 
 # Developments
 # --------------------------
-/public/assets
 /public/avatars
 /public/uploads
 /tests/clover.xml
