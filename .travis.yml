@@ -2,38 +2,38 @@ language: php
 sudo: false
 
 cache:
-  - composer
+    - composer
 
 services:
-  - redis-server
+    - redis-server
 
 mysql:
-  database: $DB_DATABASE
-  username: $APP_DB_USER
-  encoding: utf8
+    database: $DB_DATABASE
+    username: $APP_DB_USER
+    encoding: utf8
 
 php:
-  - 5.5
-  - 5.6
-  - 7
+    - 5.5
+    - 5.6
+    - 7
 
 install:
-  - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then composer require satooshi/php-coveralls:dev-master --no-progress -n; fi
-  - if [[ "$TRAVIS_PHP_VERSION" != '5.6' ]]; then composer install --no-progress -n; fi
+    - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then composer require satooshi/php-coveralls:dev-master --no-progress -n; fi
+    - if [[ "$TRAVIS_PHP_VERSION" != '5.6' ]]; then composer install --no-progress -n; fi
 
 before_script:
-  - phpenv config-add tests/php.ini
-  - mysql -e "create database if not exists ${DB_DATABASE}"
+    - phpenv config-add tests/php.ini
+    - mysql -e "create database if not exists ${DB_DATABASE}"
 
 script:
-  - composer test
+    - composer test
 
 after_success:
-  - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then bash <(curl -s https://codecov.io/bash); fi
-  - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then php vendor/bin/coveralls -v ; fi
+    - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then bash <(curl -s https://codecov.io/bash); fi
+    - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then php vendor/bin/coveralls -v ; fi
 
 after_script:
-  - mysql -e "drop database if exists ${DB_DATABASE}"
+    - mysql -e "drop database if exists ${DB_DATABASE}"
 
 matrix:
-  fast_finish: true
+    fast_finish: true
