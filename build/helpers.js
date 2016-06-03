@@ -5,45 +5,86 @@ const gutil = require('gulp-util');
 
 class Helpers {
 
+    /**
+     * Class constructor
+     *
+     * @param  {Object} gulp GULP Object
+     * @param  {Object} sync BrowserSync Object
+     * @return {Void}
+     */
     constructor (gulp, sync) {
         this._gulp = gulp;
         this._sync = sync;
 
-        const stats = fs.statSync(__dirname + '/../.env');
-
+        // Load .env so we can share envvars while development
+        const stats = fs.statSync('./.env');
         if (stats.isFile()) {
             require('dotenv').config();
         }
 
-        this.configs = require(__dirname + '/assets');
-        this.paths = {
+        // Setup configurations
+        this.configs = this._getConfigs(__dirname + '/assets');
+
+        // Setup paths
+        this.paths = this._getPaths();
+
+        // Simply determine whether this build is for production use?
+        this.production = this.configs.mode !== 'dev';
+    }
+
+    /**
+     * Initialize configuration
+     *
+     * @return {Object}
+     */
+    _getConfigs (configFile) {
+        const configs = require(configFile);
+
+        // Determine build mode, default is 'dev'
+        configs.mode = 'dev';
+        // If mode is invalid, back to 'dev' mode
+        if (['dev', 'prod'].indexOf(process.env.MODE) !== -1) {
+            configs.mode = process.env.MODE;
+        }
+
+        // Declaring 'serve' config
+        configs.port = process.env.APP_PORT || configs.serve.port; // 8080;
+        configs.host = process.env.APP_HOST || configs.serve.host; // 'localhost';
+        configs.url  = process.env.APP_URL  || configs.serve.url;  // 'localhost:8000';
+
+        return configs;
+    }
+
+    /**
+     * Initialize paths
+     *
+     * @return {Object}
+     */
+    _getPaths () {
+        const paths = {
             src: this.configs.paths.src,
             dest: this.configs.paths.dest
         };
 
-        // Determine build mode, default is 'dev'
-        this.configs.mode = 'dev';
-        // If mode is invalid, back to 'dev' mode
-        if (['dev', 'prod'].indexOf(process.env.MODE) !== -1) {
-            this.configs.mode = process.env.MODE;
-        }
-
-        this.production = this.configs.mode !== 'dev';
-
-        // Declaring 'serve' config
-        this.configs.port = process.env.APP_PORT || this.configs.serve.port; // 8080;
-        this.configs.host = process.env.APP_HOST || this.configs.serve.host; // 'localhost';
-        this.configs.url  = process.env.APP_URL  || this.configs.serve.url;  // 'localhost:8000';
-
         for (let key in this.configs.patterns) {
-            this.paths[key] = [
-                this.configs.paths.src + this.configs.patterns[key]
+            paths[key] = [
+                this.configs.paths.src + this.configs.patterns[key],
+                this._getDepsDir() + this.configs.patterns[key]
             ];
-
-            if (key === 'fonts') {
-                this.paths[key].push('./node_modules/*/' + this.configs.patterns[key]);
-            }
         }
+
+        return paths;
+    }
+
+    /**
+     * Get concated dependencies from 'package.json' file
+     *
+     * @return {String}
+     */
+    _getDepsDir () {
+        const pkgJson = require(__dirname + '/../package');
+
+        return './node_modules/{' + Object.keys(pkgJson.dependencies).join(',') + '}/';
     }
 
     /**
@@ -64,19 +105,19 @@ class Helpers {
     /**
      * Simple helper to finalize each tasks
      *
-     * @param  {Object}   build Gulp pipe object
-     * @param  {Function} build Gulp done function
+     * @param  {Object}   stream Gulp pipe object
+     * @param  {Function} done   Gulp done function
      * @return {Object}
      */
-    asset (build, done) {
-        const stream = build.pipe(this._gulp.dest(this.paths.dest))
+    build (stream, done) {
+        const pipe = stream.pipe(this._gulp.dest(this.paths.dest))
             .pipe(this._sync.stream());
 
         if (done) {
             return done();
         }
 
-        return stream;
+        return pipe;
     }
 
     /**
@@ -93,7 +134,7 @@ class Helpers {
             filename += ` (${err.lineNumber})`;
         }
 
-        helpers.echo([
+        this.echo([
             `[Error]`,
             `  message: ${message}`,
             ` filename: ${filename}`

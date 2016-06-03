@@ -22,18 +22,18 @@ gulp.task('build:styles', () => {
         `${_.paths.src}vendor`
     ];
 
-    const build = gulp.src(_.paths.styles, { base: _.paths.src })
+    const asset = gulp.src(_.paths.styles, { base: _.paths.src })
         .pipe($.sourcemaps.init())
         .pipe($.sass(_.configs.sass).on('error', $.sass.logError))
         .pipe($.autoprefixer(_.configs.autoprefixer))
         .pipe($.sourcemaps.write());
 
     if (_.production) {
-        build.pipe($.cleanCss())
+        asset.pipe($.cleanCss())
             .on('error', _.errorHandler);
     }
 
-    return _.asset(build);
+    return _.build(asset);
 });
 
 
@@ -42,18 +42,18 @@ gulp.task('build:styles', () => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('build:scripts', () => {
-    const build = gulp.src(_.paths.scripts, { base: _.paths.src })
+    const asset = gulp.src(_.paths.scripts, { base: _.paths.src })
         .pipe($.sourcemaps.init())
         .pipe($.babel({ presets: ['es2015'] }))
         .on('error', _.errorHandler)
         .pipe($.sourcemaps.write());
 
     if (_.production) {
-        build.pipe($.uglify(_.configs.uglify))
+        asset.pipe($.uglify(_.configs.uglify))
             .on('error', _.errorHandler);
     }
 
-    return _.asset(build);
+    return _.build(asset);
 });
 
 
@@ -62,12 +62,12 @@ gulp.task('build:scripts', () => {
 --------------------------------------------------------------------------------- */
 
 gulp.task('build:images', () => {
-    const build = gulp.src(_.paths.images, { base: _.paths.src })
+    const asset = gulp.src(_.paths.images, { base: _.paths.src })
         .pipe($.changed(_.paths.dest))
         .pipe($.imagemin(_.configs.imagemin))
         .on('error', _.errorHandler);
 
-    return _.asset(build);
+    return _.build(asset);
 });
 
 
