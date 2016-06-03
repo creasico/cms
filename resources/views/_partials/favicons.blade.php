@@ -6,10 +6,13 @@
 <link rel="apple-touch-icon" sizes="120x120" href="{{ asset_url('images/favicons/mobile-icon-120x120.png') }}">
 <link rel="apple-touch-icon" sizes="144x144" href="{{ asset_url('images/favicons/mobile-icon-144x144.png') }}">
 <link rel="apple-touch-icon" sizes="152x152" href="{{ asset_url('images/favicons/mobile-icon-152x152.png') }}">
+<link rel="apple-touch-icon" sizes="192x192" href="{{ asset_url('images/favicons/mobile-icon-192x192.png') }}">
+
 <link rel="icon" type="image/png" sizes="192x192" href="{{ asset_url('images/favicons/mobile-icon-192x192.png') }}">
 <link rel="icon" type="image/png" sizes="96x96" href="{{ asset_url('images/favicons/favicon-96x96.png') }}">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url('images/favicons/favicon-32x32.png') }}">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url('images/favicons/favicon-16x16.png') }}">
+
 <link rel="manifest" href="{{ asset_url('manifest.json') }}">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="{{ asset_url('images/favicons/ms-icon-144x144.png') }}">
