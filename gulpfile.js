@@ -44,10 +44,10 @@ gulp.task('build:styles', () => {
 
 gulp.task('build:scripts', () => {
     const asset = gulp.src(_.paths.scripts, { base: _.paths.src })
-        // .pipe($.sourcemaps.init())
+        .pipe($.sourcemaps.init())
         .pipe($.babel({ presets: ['es2015'] }))
         .on('error', _.errorHandler)
-        // .pipe($.sourcemaps.write());
+        .pipe($.sourcemaps.write());
 
     if (_.production) {
         asset.pipe($.uglify(_.configs.uglify))
