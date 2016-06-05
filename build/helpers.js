@@ -22,6 +22,9 @@ class Helpers {
             require('dotenv').config();
         }
 
+        // Require the package.json
+        this.package = require(__dirname + '/../package');
+
         // Setup configurations
         this.configs = this._getConfigs(__dirname + '/assets');
 
@@ -81,7 +84,7 @@ class Helpers {
         for (let key in this.configs.patterns) {
             paths[key] = [
                 this.configs.paths.src + this.configs.patterns[key],
-                this._getDepsDir() + this.configs.patterns[key]
+                this._getDepsDir() + '**/*.{js,css,scss}'
             ];
         }
 
@@ -94,9 +97,7 @@ class Helpers {
      * @return {String}
      */
     _getDepsDir () {
-        const pkgJson = require(__dirname + '/../package');
-
-        return './node_modules/{' + Object.keys(pkgJson.dependencies).join(',') + '}/';
+        return 'node_modules/{' + Object.keys(this.package.dependencies).join(',') + '}/';
     }
 
     /**

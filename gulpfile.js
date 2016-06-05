@@ -85,6 +85,21 @@ gulp.task('build:fonts', (done) => {
 
 
 
+/* Task: Modernizr
+--------------------------------------------------------------------------------- */
+
+gulp.task('modernizr', function () {
+    const conf = _.configs.modernizr;
+
+    return gulp.src(_.paths.src + '**/*.{js,scss}')
+        .pipe($.modernizr(conf.filename, conf.options))
+        .pipe($.uglify(_.configs.uglify))
+        .on('error', _.errorHandler)
+        .pipe(gulp.dest(_.paths.dest + 'vendor/'));
+});
+
+
+
 /* Task: Serve
 --------------------------------------------------------------------------------- */
 
