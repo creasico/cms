@@ -28,11 +28,8 @@ gulp.task('build:styles', () => {
         .pipe($.sass(_.configs.sass).on('error', $.sass.logError))
         .pipe($.autoprefixer(_.configs.autoprefixer))
         // .pipe($.sourcemaps.write())
-
-    if (_.production) {
-        asset.pipe($.cleanCss())
-            .on('error', _.errorHandler);
-    }
+        .pipe($.cleanCss())
+        .on('error', _.errorHandler);
 
     return _.build(asset);
 });
@@ -47,12 +44,9 @@ gulp.task('build:scripts', () => {
         .pipe($.sourcemaps.init())
         .pipe($.babel({ presets: ['es2015'] }))
         .on('error', _.errorHandler)
-        .pipe($.sourcemaps.write());
-
-    if (_.production) {
-        asset.pipe($.uglify(_.configs.uglify))
-            .on('error', _.errorHandler);
-    }
+        .pipe($.sourcemaps.write())
+        .pipe($.uglify(_.configs.uglify))
+        .on('error', _.errorHandler);
 
     return _.build(asset);
 });
@@ -94,7 +88,7 @@ gulp.task('build:fonts', (done) => {
 /* Task: Serve
 --------------------------------------------------------------------------------- */
 
-gulp.task('serve', () => {
+gulp.task('serve', ['build'], () => {
     const connect = require('gulp-connect-php');
     const sync = browserSync.init({
         port: _.configs.port,
@@ -105,7 +99,7 @@ gulp.task('serve', () => {
     });
 
     // Let's assume that you already setup your app server vhost
-    if (_.configs.url.indexOf('localhost:8000') !== -1) {
+    if (_.configs.url.indexOf('localhost') !== -1) {
         return connect.server({ base: './public' }, () => {
             return sync;
         });
@@ -184,7 +178,9 @@ gulp.task('clean', (done) => {
 /* Task: Build
 --------------------------------------------------------------------------------- */
 
-gulp.task('build', ['build:styles', 'build:fonts', 'build:scripts', 'build:images']);
+gulp.task('build', (done) => {
+    return sequence('build:styles', 'build:fonts', 'build:scripts', 'build:images', done);
+});
 
 
 

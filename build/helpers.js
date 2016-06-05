@@ -40,12 +40,7 @@ class Helpers {
     _getConfigs (configFile) {
         const configs = require(configFile);
 
-        // Determine build mode, default is 'dev'
-        configs.mode = 'dev';
-        // If mode is invalid, back to 'dev' mode
-        if (['dev', 'prod'].indexOf(process.env.MODE) !== -1) {
-            configs.mode = process.env.MODE;
-        }
+        configs.mode = this._getMode(process.env.MODE);
 
         // Declaring 'serve' config
         configs.port = process.env.APP_PORT || configs.serve.port; // 8080;
@@ -53,6 +48,23 @@ class Helpers {
         configs.url  = process.env.APP_URL  || configs.serve.url;  // 'localhost:8000';
 
         return configs;
+    }
+
+    /**
+     * Get enviroment development mode
+     *
+     * @param  {String} envMode Mode from system envvars
+     * @return {String}
+     */
+    _getMode (envMode) {
+        // Determine build mode, default is 'dev'
+        const mode = 'dev';
+        // If mode is invalid, back to 'dev' mode
+        if (['dev', 'prod'].indexOf(envMode) !== -1) {
+            mode = envMode;
+        }
+
+        return mode;
     }
 
     /**
