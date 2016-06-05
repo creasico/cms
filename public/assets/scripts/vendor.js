@@ -1,2 +1,1 @@
-"use strict";
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzY3JpcHRzL3ZlbmRvci5qcyIsInNvdXJjZXNDb250ZW50IjpbXSwic291cmNlUm9vdCI6Ii9zb3VyY2UvIn0=
+"use strict";function _interopRequireDefault(e){return e&&e.__esModule?e:{"default":e}}var _jquery=require("jquery"),_jquery2=_interopRequireDefault(_jquery),_bootstrap=require("bootstrap"),_bootstrap2=_interopRequireDefault(_bootstrap);window.$=window.jQuery=_jquery2["default"],_bootstrap2["default"].$=_jquery2["default"];
