@@ -7,20 +7,25 @@
 
     <title>{{ config('project.title') }}</title>
 
-    {{-- DOC: include application favicons --}}
-    @include('_partials.favicons')
-
     {{-- DOC: include page head, this section contains all stylesheets --}}
-    @include('_partials._head')
+    @yield('site-head')
 </head>
 <body id="app-layout">
-    {{-- DOC: include the main navbar --}}
-    @include('_partials.navbar')
-
     {{-- DOC: retrieve the page content --}}
-    @yield('page-content')
+    @yield('site-content')
+
+    <script id="site-script">
+    window.baseUrl = '{{ url('') }}';
+    window.siteUrl = function (path) {
+        return baseUrl + '/' + path.replace(/^\/|\/$/g, '');
+    };
+    </script>
+
+    @if (env('APP_ENV') != 'production')
+        <script src="//cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
+    @endif
 
     {{-- DOC: include the page foot, this section contains all javascripts --}}
-    @include('_partials._foot')
+    @yield('site-foot')
 </body>
 </html>
