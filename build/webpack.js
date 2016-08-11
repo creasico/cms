@@ -6,7 +6,7 @@ const webpack = require('webpack');
 module.exports = (paths, configs) => {
     const webpackConfig = {
         output: {
-            filename: '[name].js'
+            filename: '[name].js',
             path: path.resolve(paths.dest, 'scripts')
         }
     };

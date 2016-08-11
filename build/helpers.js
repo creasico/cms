@@ -10,7 +10,7 @@ class Helpers {
      *
      * @param  {Object} gulp GULP Object
      * @param  {Object} sync BrowserSync Object
-     * @return {Void}
+     * @return {void}
      */
     constructor (gulp, sync) {
         this._gulp = gulp;
@@ -30,9 +30,6 @@ class Helpers {
 
         // Setup paths
         this.paths = this._getPaths();
-
-        // Simply determine whether this build is for production use?
-        this.production = this.configs.mode !== 'dev';
     }
 
     /**
@@ -61,7 +58,7 @@ class Helpers {
      */
     _getMode (envMode) {
         // Determine build mode, default is 'dev'
-        const mode = 'dev';
+        let mode = 'dev';
         // If mode is invalid, back to 'dev' mode
         if (['dev', 'prod'].indexOf(envMode) !== -1) {
             mode = envMode;
@@ -105,7 +102,7 @@ class Helpers {
      *
      * @param  {String} message
      * @param  {String} color
-     * @return {Mixed}
+     * @return {mixed}
      */
     echo (message, color) {
         color = color && color in gutil.colors ? color : 'green';
@@ -141,7 +138,7 @@ class Helpers {
      */
     errorHandler (err) {
         const message = err.message.replace(err.fileName + ': ', '');
-        const filename = err.fileName.replace(__dirname, '');
+        let filename = err.fileName.replace(__dirname, '');
 
         if (err.lineNumber) {
             filename += ` (${err.lineNumber})`;
